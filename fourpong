@@ -1,0 +1,128 @@
+#!/usr/bin/python
+# -*- coding: utf8 -*-
+
+# fourpong
+# Juego tipo pong para cuatro jugadores en un solo ordenador
+# Author: Alfonso E.M.
+# License: Free (GPL) 
+# Version: 1.0 - 2/Oct/2007
+
+import pygame
+import sys,getopt
+import random
+
+import Tools 
+import Player,Ball
+import Gui
+
+ 
+# MAIN INITIALIZATION
+
+def main():
+
+  WIDTH=800
+  HEIGHT=600
+  num_players=4
+  level=1
+  matchpoints=10
+
+  try:
+    opts, args = getopt.getopt(sys.argv[1:],"hlp",["help","level=","points="])
+  except getopt.GetoptError:
+    Tools.show_help()
+    sys.exit(2)
+
+  for opt, arg in opts:
+    if opt in ("-h", "--help"):
+      Tools.show_help()
+      sys.exit(0)    
+    elif opt in ("-l","--level"):
+      level=int(arg)
+      if level < 0:
+         level = 0
+      elif level > 10:
+         level = 10
+    elif opt in ("-p","--points"):
+         matchpoints=int(arg)
+
+  lag=int((11-level) * 1.5)              
+
+
+  gui=Gui.Gui(WIDTH,HEIGHT,(169,64,468,468))
+  
+
+# MAIN GENERAL GAME LOOP 
+  while 1:
+    gui.show_intro()
+    player=[] 
+# player 1: arriba
+    player.append(Player.Player("player1.png",350,50,2,0))
+# player 2: derecha
+    player.append(Player.Player("player2.png",636,235,0,2))
+# player 3: abajo
+    player.append(Player.Player("player3.png",350,531,2,0))
+# player 4: izquierda
+    player.append(Player.Player("player4.png",155,232,0,2))
+    
+
+    ball=Ball.Ball("ball.png")
+
+
+    gui.show_court()
+    for n in range(num_players):
+      gui.show_player(player[n])
+
+    
+# MAIN ONE ROUND LOOP
+
+    while 1: 
+
+     last_hitter=-1  
+     ball.launch()
+
+     while 1:
+       for n in range(num_players):
+           gui.erase_player(player[n]) 
+
+       gui.move_player(player)
+
+       for n in range(num_players):
+           gui.show_player(player[n])
+
+       gui.move_ball(ball)
+
+# Collision check
+       for n in range(num_players):
+           if player[n].rect.colliderect(ball.rect):
+ 	      last_hitter=n
+              gui.snd_hit.play()
+#  Vertical players collision            
+              if n == 1 or n == 3: 
+    		ball.incx=-ball.incx
+# This weird (invented) formula gives players more control over ball bounces
+# Angle will change depending of pad impact point 
+    		ball.incy=2.5*(ball.rect.centery-player[n].rect.centery)/player[n].rect.height
+# Horizontal players collision
+              else:
+                ball.incy=-ball.incy
+    		ball.incx=2.5*(ball.rect.centerx-player[n].rect.centerx)/player[n].rect.width
+# A little bit of randomness to avoid loops and "deadlocks"
+              if random.randint(0,6) == 0:
+                 ball.incx=ball.incx*(1+random.random())
+              if random.randint(0,6) == 0:
+                 ball.incy=ball.incy*(1+random.random())
+
+       if not gui.court.contains(ball.rect):
+          gui.goal(player[last_hitter],last_hitter,ball) 
+          break
+
+       pygame.time.delay(lag)
+
+
+     if last_hitter >= 0 and player[last_hitter].score == matchpoints:
+       break
+
+    gui.show_end(player)    
+
+
+if __name__ == '__main__': main()
