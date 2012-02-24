@@ -5,6 +5,8 @@ import pygame
 from pygame.locals import *
 import Tools
 
+JOYSTICK=0
+
 class Gui:
   '''
   Screen graphics and sounds are embedded in this class
@@ -16,8 +18,8 @@ class Gui:
     pygame.mouse.set_visible(0)
     pygame.key.set_repeat(10,10)
 
-#   self.screen=pygame.display.set_mode(resolution,pygame.FULLSCREEN)
-    self.screen=pygame.display.set_mode(resolution)
+    self.screen=pygame.display.set_mode(resolution,pygame.FULLSCREEN)
+#    self.screen=pygame.display.set_mode(resolution)
   
     self.snd_intro=Tools.load_sound("intro.wav")
     self.snd_hit=Tools.load_sound("hit.wav")
@@ -38,11 +40,14 @@ class Gui:
     self.scoreboard.append(pygame.Rect(678,380,100,100))
     self.scoreboard.append(pygame.Rect(24,380,100,100))
 
+# JOYSTICK (BUZZ) INITIALIZATION
     if pygame.joystick.get_count() > 0:
        print "Joystick OK!";
-       self.js=pygame.joystick.Joystick(0)
+       self.js=pygame.joystick.Joystick(JOYSTICK)
        self.js.init()
-       
+       print "Using joystick:",self.js.get_name()," with",self.js.get_numbuttons()," buttons and ",self.js.get_numaxes()," axes."
+       pygame.event.set_blocked(JOYAXISMOTION)
+                                       
 # SHOW INTRO
   def show_intro(self):
 
@@ -85,25 +90,30 @@ class Gui:
 
             event=pygame.event.pump()
 
-# KEYS SECTION
+# KEYS & JOYSTICK (BUZZ) SECTION
             keys_state=pygame.key.get_pressed()
+ 
+# Debug joystick buttons            
+#            for b in range(0,12):
+#              print "joystick:",b,self.js.get_button(b);
+
             if keys_state[K_ESCAPE]:
                sys.exit(0)
-            if keys_state[K_c]:
+            if keys_state[K_c] or self.js.get_button(4):
                player[0].move_leftright(self.court.left,self.court.right,-1)
-            if keys_state[K_v]:
+            if keys_state[K_v] or self.js.get_button(1):
                player[0].move_leftright(self.court.left,self.court.right,1)
-            if keys_state[K_p]:
+            if keys_state[K_p] or self.js.get_button(9):
                player[1].move_updown(self.court.top,self.court.bottom,-1)
-            if keys_state[K_l]:
+            if keys_state[K_l] or self.js.get_button(6):
                player[1].move_updown(self.court.top,self.court.bottom,1)
-            if keys_state[K_n]:
+            if keys_state[K_n] or self.js.get_button(14):
                player[2].move_leftright(self.court.left,self.court.right,-1)
-            if keys_state[K_m]:
+            if keys_state[K_m] or self.js.get_button(11):
                player[2].move_leftright(self.court.left,self.court.right,1)
-            if keys_state[K_q]:
+            if keys_state[K_q] or self.js.get_button(19):
                player[3].move_updown(self.court.top,self.court.bottom,-1)
-            if keys_state[K_a]:
+            if keys_state[K_a] or self.js.get_button(16):
                player[3].move_updown(self.court.top,self.court.bottom,1)
                 
 # GOAL !!!

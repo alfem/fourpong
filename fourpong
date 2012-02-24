@@ -27,12 +27,13 @@ def main():
   matchpoints=10
 
   try:
-    opts, args = getopt.getopt(sys.argv[1:],"hlp",["help","level=","points="])
+    opts, args = getopt.getopt(sys.argv[1:],"hl:p",["help","level=","points="])
   except getopt.GetoptError:
     Tools.show_help()
     sys.exit(2)
 
   for opt, arg in opts:
+    print opt, arg
     if opt in ("-h", "--help"):
       Tools.show_help()
       sys.exit(0)    
@@ -40,12 +41,12 @@ def main():
       level=int(arg)
       if level < 0:
          level = 0
-      elif level > 10:
+      elif level > 20:
          level = 10
     elif opt in ("-p","--points"):
          matchpoints=int(arg)
 
-  lag=int((11-level) * 1.5)              
+  lag=int(21-level)              
 
 
   gui=Gui.Gui(WIDTH,HEIGHT,(169,64,468,468))

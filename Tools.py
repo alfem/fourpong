@@ -34,6 +34,6 @@ def show_help():
         print """
 Usage:
    -h   --help          This simple help
-   -l   --level=n       Skill Level (1-10)
+   -l   --level=n       Skill Level (1-20)
    -p   --points=n      Points in a match (default=10)
         """
