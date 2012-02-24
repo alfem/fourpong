@@ -1,0 +1,9 @@
+
+BUZZ -> Joystick buttons mapping
+
+Color\Player  P1 P2 P3 P4
+BIG RED    O   0  5 10 15
+blue       -   4  9 14 19
+orange     -   3  8 13 17
+green      -   2  7 12 16
+yellow     -   1  6 11 16
